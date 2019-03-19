@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "542028902347",
+    "firebase_url": "https://redcarpetassignment.firebaseio.com",
+    "project_id": "redcarpetassignment",
+    "storage_bucket": "redcarpetassignment.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542028902347:android:085f4a20de0da747",
+        "android_client_info": {
+          "package_name": "com.example.redcarpetassignment"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "542028902347-72qiqorjuc4ruc8ij3sggtkpl9e3ceo0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.redcarpetassignment",
+            "certificate_hash": "1889a202b0c081760aba87553408f09fb64b7f69"
+          }
+        },
+        {
+          "client_id": "542028902347-ccg5heomureboa88d0seuh7uj4mflj0t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL6fHI_R0ZU9upROgwexxeXQjiUiYhp9E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "542028902347-ccg5heomureboa88d0seuh7uj4mflj0t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
