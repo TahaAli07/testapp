@@ -1,8 +1,6 @@
 # testapp
 A simple management app
 
-Create a repo called "testapp" on github or bitbucket, make it public and share with us.
-
 What are you building: A simple visitor management app. See here to get a better idea - https://www.youtube.com/watch?v=tMGUzwgZC58 . The main challenge of this app will be to see if you can understand API and able to use them. Also if you can use material design.
 
 Api : You will use Firebase api to do two things: store visitor data and send OTP verification

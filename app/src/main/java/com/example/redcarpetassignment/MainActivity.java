@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.camerakit.CameraKitView;
+import com.google.firebase.FirebaseApp;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FirebaseApp.initializeApp(MainActivity.this);
         rootLayout = findViewById(R.id.rootLayout);
         phoneEditText = findViewById(R.id.phoneEditText);
         cameraKitView = findViewById(R.id.cameraKitView);
@@ -137,8 +139,8 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(rootLayout, "Take a selfie please", Snackbar.LENGTH_LONG).show();
             return;
         }
-        FirebaseHelper.getInstance(MainActivity.this).sendOtp(number);
         Intent intent = new Intent(MainActivity.this, OtpVerification.class);
+        intent.putExtra("number", number);
         startActivity(intent);
     }
 
@@ -158,9 +160,10 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Consumer<File>() {
                     @Override
                     public void accept(File file) {
-                        Toast.makeText(MainActivity.this, "inisde accept " + file.getPath(), Toast.LENGTH_SHORT).show();
                         try {
                             Utils.copy(file, compressedImage);
+                            //Snackbar.make(rootLayout,"inisde accept " + compressedImage.getPath(),Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(rootLayout,"Compressed Image at :- " + compressedImage.getPath(),Snackbar.LENGTH_LONG).show();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
