@@ -5,49 +5,103 @@
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Phone Number" />
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/MyToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        app:subtitleTextAppearance="@style/ToolbarTextAppearance.Subtitle"
+        app:title="Visitor Manager"
+        app:titleTextAppearance="@style/ToolbarTextAppearance.Title" />
 
-    <EditText
-        android:id="@+id/phoneEditText"
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_margin="15dp"
+        android:src="@drawable/visitor" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:maxLength="10" />
+        android:layout_marginBottom="10dp"
+        android:text="Enter your mobile number"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/phoneEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/edittext_background"
+            android:inputType="phone"
+            android:maxLength="10"
+            android:maxLines="1"
+            android:padding="10dp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+
+        <com.camerakit.CameraKitView
+            android:id="@+id/cameraKitView"
+            android:layout_width="300dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:keepScreenOn="true"
+            app:camera_facing="front"
+            app:camera_flash="off"
+            app:camera_focus="continuous"
+            app:camera_permissions="camera" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/captureBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:layout_margin="5dp"
+            android:src="@drawable/camera" />
+    </FrameLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Photo" />
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="sans-serif"
+        android:text="Tap Next to verify your phone number. You don't need to manually enter verification code if the number is in this phone"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:visibility="visible" />
 
-    <com.camerakit.CameraKitView
-        android:id="@+id/cameraKitView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center"
-        android:adjustViewBounds="true"
-        android:keepScreenOn="true"
-        app:camera_facing="front"
-        app:camera_flash="off"
-        app:camera_focus="continuous"
-        app:camera_permissions="camera" />
-
-    <Button
-        android:id="@+id/captureBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="CAPTURE" />
 
     <Button
         android:id="@+id/submitBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit" />
-
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="140dp"
+        android:background="#FF0000"
+        android:shadowColor="#000"
+        android:text="next"
+        android:textColor="#fff"
+        android:textStyle="bold" />
 </LinearLayout>

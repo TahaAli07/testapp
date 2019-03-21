@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.material.snackbar.Snackbar;
+
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -51,12 +53,12 @@ public class FirebaseHelper {
     private FirebaseStorage storage;
     private StorageReference storageRef;
 
-
     public static FirebaseHelper getInstance(Context context) {
         if (firebaseHelper == null) {
             firebaseHelper = new FirebaseHelper(context);
         }
         firebaseHelper.context = context;
+        firebaseHelper.isUserDone = false;
         return firebaseHelper;
     }
 
@@ -83,7 +85,7 @@ public class FirebaseHelper {
                         //     detect the incoming verification SMS and perform verification without
                         //     user action.
                         Log.d(TAG, "onVerificationCompleted:" + credential);
-                        Toast.makeText(context, "onVerificationCompleted", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "onVerificationCompleted", Toast.LENGTH_SHORT).show();
                         signInWithPhoneAuthCredential(credential);
                     }
 
@@ -93,17 +95,14 @@ public class FirebaseHelper {
                         // for instance if the the phone number format is not valid.
                         Log.w(TAG, "onVerificationFailed", e);
                         isUserDone = true;
-                        Toast.makeText(context, "onVerificationFailed", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "onVerificationFailed", Toast.LENGTH_SHORT).show();
                         if (e instanceof FirebaseAuthInvalidCredentialsException) {
                             // Invalid request
-                            Toast.makeText(context, "Invalid Request", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(((Activity) context).findViewById(R.id.rootLinearLayout), "Invalid Request : Please try again", Snackbar.LENGTH_LONG).show();
                         } else if (e instanceof FirebaseTooManyRequestsException) {
                             // The SMS quota for the project has been exceeded
-                            Toast.makeText(context, "SMS Quota Exceeded", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(((Activity) context).findViewById(R.id.rootLinearLayout), "SMS Quota Exceeded : Please try again", Snackbar.LENGTH_LONG).show();
                         }
-
-                        // Show a message and update the UI
-                        // ...
                     }
 
                     @Override
@@ -113,22 +112,19 @@ public class FirebaseHelper {
                         // now need to ask the user to enter the code and then construct a credential
                         // by combining the code with a verification ID.
                         Log.d(TAG, "onCodeSent:" + verificationId);
-                        Toast.makeText(context, "OTP SENT", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "OTP SENT", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(((Activity) context).findViewById(R.id.rootLinearLayout), "OTP SENT", Snackbar.LENGTH_LONG).show();
                         // Save verification ID and resending token so we can use them later
                         verId = verificationId;
                         resendToken = token;
-
-                        // ...
                     }
 
                     @Override
                     public void onCodeAutoRetrievalTimeOut(String s) {
                         Log.d(TAG, "onCodeAutoRetreivalTimeOut: " + s);
                         if (!isUserDone) {
-                            //User was not recognised as a visitor or a suspicious user
                             //30 seconds Timeout
-                            Toast.makeText(context, "30 Seconds TimeOut: " + "s" + "i.e 30 seconds have passed", Toast.LENGTH_SHORT).show();
-                            uploadImage("suspicious_users");
+                            uploadImage("suspicious_users_timeout");
                         }
                     }
                 });
@@ -139,9 +135,9 @@ public class FirebaseHelper {
         if (!code.equalsIgnoreCase("") && !verId.equalsIgnoreCase("")) {
             credential = PhoneAuthProvider.getCredential(verId, code);
         } else {
-            Toast.makeText(context, "credential is null here :", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "credential is null here :", Toast.LENGTH_LONG).show();
         }
-        Toast.makeText(context, "Credentials received are - " + credential, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "Credentials received are - " + credential, Toast.LENGTH_SHORT).show();
         signInWithPhoneAuthCredential(credential);
     }
 
@@ -153,19 +149,19 @@ public class FirebaseHelper {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            Toast.makeText(context, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
                             FirebaseUser user = task.getResult().getUser();
 
                             uploadImage("visitor");
                         } else {
                             // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(context, "signInWithCredential:failure", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, "signInWithCredential:failure", Toast.LENGTH_SHORT).show();
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 //Invalid Code
-                                Toast.makeText(context, "Invalid Code !!! ", Toast.LENGTH_LONG).show();
+                                //Toast.makeText(context, "Invalid Code !!! ", Toast.LENGTH_LONG).show();
 
-                                uploadImage("suspicious_users");
+                                uploadImage("suspicious_users_invalid_otp");
                             }
                         }
                     }
@@ -178,13 +174,11 @@ public class FirebaseHelper {
     }
 
     private void saveAsVisitor(String imageUrl, String number) {
-        //remember to save visit_count initially as 1
-        //show snackbar "New Visitor Saved!"
         User user = new User(number, imageUrl, 1);
         ref.child("visitors").push().setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(context, "New Visitor Saved!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "New Visitor Saved!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -199,30 +193,25 @@ public class FirebaseHelper {
                 for (DataSnapshot snapshot : dataSnapshot.child("visitors").getChildren()) {
                     User user = snapshot.getValue(User.class);
                     if (user.getNumber().equalsIgnoreCase(number)) {
-                        //User Exists "user"
+                        //User Exists
                         //Point 4 flow
-                        Toast.makeText(context, "User Already Exists", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "User Already Exists", Toast.LENGTH_SHORT).show();
                         updateVisitCount(snapshot.getKey(), user);
                         int count = user.getVisit_count() + 1;
                         //Toast.makeText(context, "welcome back for " + count + " time", Toast.LENGTH_SHORT).show();
-                        Snackbar.make(((Activity) context).getWindow().getDecorView().getRootView()
-                                , "welcome back for " + count + " time"
-                                , Snackbar.LENGTH_LONG).show();
-                        moveBack();
+                        moveBack("Welcome back for " + count + " time");
                         return;
                     }
                 }
                 //User Not Exists
-                //sending OTP flow followed Point 3
-                Toast.makeText(context, "User Not Exists", Toast.LENGTH_SHORT).show();
+                //Point 3 flow sending OTP
+                //Toast.makeText(context, "User Not Exists", Toast.LENGTH_SHORT).show();
                 sendOtp(number);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
                 Log.w(TAG, "Getting Users Cancelled Error : ", databaseError.toException());
-                // ...
             }
         };
         ref.addListenerForSingleValueEvent(valueEventListener);
@@ -236,6 +225,7 @@ public class FirebaseHelper {
     }
 
     private void uploadImage(final String userType) {
+        Snackbar.make(((Activity) context).findViewById(R.id.rootLinearLayout), "Uploading Image . . .", Snackbar.LENGTH_INDEFINITE).show();
         isUserDone = true;
         Uri file = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "compressed.jpg"));
         final StorageReference ref = storageRef.child("images/" + number);
@@ -247,36 +237,41 @@ public class FirebaseHelper {
                 if (!task.isSuccessful()) {
                     throw task.getException();
                 }
-
-                // Continue with the task to get the download URL
                 return ref.getDownloadUrl();
             }
         }).addOnCompleteListener(new OnCompleteListener<Uri>() {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
-                    //Upload Successful
                     String url = task.getResult().toString();
-                    Toast.makeText(context, "Upload Successful " + url, Toast.LENGTH_SHORT).show();
+                    Snackbar.make(((Activity) context).findViewById(R.id.rootLinearLayout), "Upload Successful", Snackbar.LENGTH_LONG).show();
+                    //Toast.makeText(context, "Upload Successful " + url, Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Upload Successfull , url is " + url);
                     if (userType.equalsIgnoreCase("visitor")) {
                         //If User is a visitor
                         saveAsVisitor(url, number);
-                    } else if (userType.equalsIgnoreCase("suspicious_users")) {
-                        //If User is a suspicious user
+                        moveBack("New Visitor Saved ! ");
+                    } else if (userType.equalsIgnoreCase("suspicious_users_timeout")) {
+                        //User TimeOut
                         saveAsSuspiciousUser(url, number);
-                        moveBack();
+                        moveBack("Suspicious User :- 30 Seconds Timeout");
+                    } else if (userType.equalsIgnoreCase("suspicious_users_invalid_otp")) {
+                        //User enters Invalid Otp
+                        saveAsSuspiciousUser(url, number);
+                        moveBack("Suspicious User :- Invalid OTP");
                     }
                 } else {
-                    // Handle failures
-                    // ...
-                    Toast.makeText(context, "Upload Failed", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(((Activity) context).findViewById(R.id.rootLinearLayout), "Upload Successful", Snackbar.LENGTH_LONG).show();
+                    //Toast.makeText(context, "Upload Failed", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    public void moveBack() {
+    private void moveBack(String message) {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("message", message);
+        ((Activity) context).setResult(Activity.RESULT_OK, resultIntent);
         ((Activity) context).finish();
     }
 }

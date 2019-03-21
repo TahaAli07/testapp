@@ -1,14 +1,20 @@
 package com.example.redcarpetassignment;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Environment;
-import android.support.design.widget.Snackbar;
 
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -37,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private Button submitBtn;
     private String number = "";
     private CameraKitView cameraKitView;
-    private Button captureBtn;
+    private FloatingActionButton captureBtn;
     private File compressedImage;
     private Disposable disposable;
 
@@ -139,9 +145,11 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(rootLayout, "Take a selfie please", Snackbar.LENGTH_LONG).show();
             return;
         }
+        phoneEditText.setText("");
+        phoneEditText.clearFocus();
         Intent intent = new Intent(MainActivity.this, OtpVerification.class);
         intent.putExtra("number", number);
-        startActivity(intent);
+        startActivityForResult(intent, 1001);
     }
 
     private void getStoragePermission() {
@@ -153,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void compressImage(File savedPhoto) {
         disposable = new Compressor(MainActivity.this)
-                .setQuality(20)
+                .setQuality(5)
                 .compressToFileAsFlowable(savedPhoto)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -163,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             Utils.copy(file, compressedImage);
                             //Snackbar.make(rootLayout,"inisde accept " + compressedImage.getPath(),Snackbar.LENGTH_SHORT).show();
-                            Snackbar.make(rootLayout,"Compressed Image at :- " + compressedImage.getPath(),Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(rootLayout, "Compressed Image at :- " + compressedImage.getPath(), Snackbar.LENGTH_LONG).show();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -175,5 +183,23 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("Debug", throwable.getMessage());
                     }
                 });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case (1001): {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null) {
+                        String message = data.getStringExtra("message");
+                        Snackbar.make(rootLayout, message, Snackbar.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, "Data Received is null", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            }
+        }
     }
 }

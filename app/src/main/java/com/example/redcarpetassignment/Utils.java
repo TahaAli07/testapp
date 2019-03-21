@@ -2,7 +2,8 @@ package com.example.redcarpetassignment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.design.widget.Snackbar;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +21,8 @@ public class Utils {
         inStream.close();
         outStream.close();
     }
-    public static void showSnackbar(Context context,String message){
-        Snackbar.make(((Activity)context).findViewById(R.id.content),message,Snackbar.LENGTH_SHORT).show();
+
+    public static void showSnackbar(Context context, String message) {
+        Snackbar.make(((Activity) context).findViewById(R.id.content), message, Snackbar.LENGTH_SHORT).show();
     }
 }
