@@ -38,15 +38,16 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class FirebaseHelper {
-    private FirebaseAuth firebaseAuth;
     private Context context;
     private static FirebaseHelper firebaseHelper;
-    private String verId;
-    private PhoneAuthProvider.ForceResendingToken resendToken;
     final String TAG = "FirebaseLog";
     private boolean isUserDone = false;
-
     private String number = "";
+
+    private FirebaseAuth firebaseAuth;
+    private String verId;
+    private PhoneAuthProvider.ForceResendingToken resendToken;
+
     private FirebaseDatabase database;
     private DatabaseReference ref;
 
@@ -114,7 +115,6 @@ public class FirebaseHelper {
                         Log.d(TAG, "onCodeSent:" + verificationId);
                         //Toast.makeText(context, "OTP SENT", Toast.LENGTH_SHORT).show();
                         Snackbar.make(((Activity) context).findViewById(R.id.rootLinearLayout), "OTP SENT", Snackbar.LENGTH_LONG).show();
-                        // Save verification ID and resending token so we can use them later
                         verId = verificationId;
                         resendToken = token;
                     }
@@ -227,7 +227,7 @@ public class FirebaseHelper {
     private void uploadImage(final String userType) {
         Snackbar.make(((Activity) context).findViewById(R.id.rootLinearLayout), "Uploading Image . . .", Snackbar.LENGTH_INDEFINITE).show();
         isUserDone = true;
-        Uri file = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "compressed.jpg"));
+        final Uri file = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "compressed.jpg"));
         final StorageReference ref = storageRef.child("images/" + number);
         UploadTask uploadTask = ref.putFile(file);
 
@@ -242,6 +242,7 @@ public class FirebaseHelper {
         }).addOnCompleteListener(new OnCompleteListener<Uri>() {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
+                Utils.deleteFile(file);
                 if (task.isSuccessful()) {
                     String url = task.getResult().toString();
                     Snackbar.make(((Activity) context).findViewById(R.id.rootLinearLayout), "Upload Successful", Snackbar.LENGTH_LONG).show();

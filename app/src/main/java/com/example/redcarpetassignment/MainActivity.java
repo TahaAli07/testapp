@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void compressImage(File savedPhoto) {
         disposable = new Compressor(MainActivity.this)
-                .setQuality(5)
+                .setQuality(15)
                 .compressToFileAsFlowable(savedPhoto)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
